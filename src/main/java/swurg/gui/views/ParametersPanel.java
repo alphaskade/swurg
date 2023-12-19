@@ -78,7 +78,7 @@ public class ParametersPanel extends JPanel
         TablePanel tablePanel = new TablePanel(parametersTableModel, new CustomTableCellRenderer());
         ParametersContextMenu contextMenu = new ParametersContextMenu(tablePanel.getTable());
         tablePanel.setContextMenu(contextMenu);
-        JPanel eastPanel = createEastPanel();
+        JPanel eastPanel = createContentPanel();
         JPanel southPanel = new StatusPanel();
 
         add(northPanel, BorderLayout.NORTH);
@@ -131,24 +131,30 @@ public class ParametersPanel extends JPanel
         return northPanel;
     }
 
-    private JPanel createEastPanel() {
+    private JPanel createContentPanel() {
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+
+        JEditorPane editorPane = createTextLabel();
+        JScrollPane scrollPane = new JScrollPane(editorPane);
+
+        contentPanel.add(scrollPane);
+        contentPanel.add(Box.createVerticalStrut(16));
+
+        return contentPanel;
+    }
+
+    private JEditorPane createTextLabel() {
         String htmlContent = HtmlResourceLoader.loadHtmlContent("howToText.html");
-        JLabel label = new JLabel(htmlContent);
-        label.putClientProperty("html.disable", null);
+        String formattedHtmlContent = MessageFormat.format(htmlContent, VERSION, EXTENSION);
 
-        JPanel eastPanel = new JPanel(new GridBagLayout());
-        eastPanel.setBorder(BorderFactory.createTitledBorder("How To"));
+        JEditorPane editorPane = new JEditorPane();
+        editorPane.setBorder(BorderFactory.createTitledBorder("How To"));
+        editorPane.setContentType("text/html");
+        editorPane.setText(formattedHtmlContent);
+        editorPane.setEditable(false);
 
-        GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new Insets(4, 8, 4, 8);
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-
-        eastPanel.add(label, gridBagConstraints);
-
-        return eastPanel;
+        return editorPane;
     }
 
     @Override
